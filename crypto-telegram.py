@@ -15,4 +15,13 @@ def sendMessage(message):
     requests.get(url)
 
 
-sendMessage("Hello World!")
+def getCoin(coin, fiat):
+
+    url = EXCHANGE_API + "ids=" + coin + "&vs_currencies=" + fiat
+    response = requests.get(url)
+    response_json = response.json()
+    price = response_json[coin][fiat]
+    return price
+
+
+sendMessage(getCoin("algorand", "eur"))
