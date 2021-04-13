@@ -4,8 +4,6 @@
 
 #### Telegram BOT for alerting crypto currency price changes &amp; historical data.
 
-##### Usage -
-
 ###### Create virtual environment and install requirements.
 
 ```
