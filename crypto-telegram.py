@@ -19,6 +19,8 @@ threshold = {
 
 history = {'BTC': [], 'ETH': [], 'ALGO': []}
 
+delay = 60 * 5
+
 
 def sendMessage(message):
     url = f'https://api.telegram.org/bot{TELEGRAM_BOT_API}/sendMessage?chat_id={TELEGRAM_CHAT_ID}&parse_mode=html&text={message}'
@@ -58,8 +60,10 @@ def calibrateThreshold(coin, fiat):
     price = round(price, 2)
     updateThreshold(coin, "MAX", price)
     updateThreshold(coin, "MIN", price)
+    max = round(threshold[coin]['MAX'], 2)
+    min = round(threshold[coin]['MIN'], 2)
     sendMessage(
-        f'🔧 <b>{coin}</b> CALIBRATING: <code>{price}</code> <i>{fiat}</i>\n<i>calibrated threshold - {threshold[coin]} {fiat}</i>')
+        f'🔧 <b>{coin}</b> CALIBRATING: <code>{price}</code> <i>{fiat}</i>\n<i>calibrated threshold - MAX: {max} - MIN: {min} {fiat}</i>')
 
 
 def checkCoin(coin, fiat):
@@ -70,24 +74,35 @@ def checkCoin(coin, fiat):
     history[coin].append(price)
 
     if price >= threshold_max:
-        updateThreshold(coin, "MAX", price)
+        calibrateThreshold(coin, fiat)
         sendMessage(
-            f'⚠️ <b>{coin}</b> Rise Signal: <code>{price}</code> <i>{fiat}</i> 📈\n<i>current threshold - {threshold_max} {fiat}</i>\n[AI] <i>calibrated threshold - {threshold[coin]["MAX"]} {fiat}</i>')
+            f'⚠️ <b>{coin}</b> Rise Signal: <code>{price}</code> <i>{fiat}</i> 📈\n<i>current threshold - {round(threshold_max, 2)} {fiat}</i>\n[AI] <i>calibrated threshold - {round(threshold[coin]["MAX"], 2)} {fiat}</i>')
 
     elif price <= threshold_min:
-        updateThreshold(coin, "MIN", price)
+        calibrateThreshold(coin, fiat)
         sendMessage(
-            f'⚠️ <b>{coin}</b> Down Signal: <code>{price}</code> <i>{fiat}</i> 📉\n<i>current threshold - {threshold_min} {fiat}</i>\n[AI] <i>calibrated threshold - {threshold[coin]["MIN"]} {fiat}</i>')
+            f'⚠️ <b>{coin}</b> Down Signal: <code>{price}</code> <i>{fiat}</i> 📉\n<i>current threshold - {round(threshold_min, 2)} {fiat}</i>\n[AI] <i>calibrated threshold - {round(threshold[coin]["MIN"], 2)} {fiat}</i>')
 
 
-# sendMessage(
-#     f'<b>Crypto-Telegram</b> <code>[Machine Learning]</code>\n<i>Project created by arshetamine with love.</i>')
-# time.sleep(5)
+def checkAll():
+    checkCoin('BTC', 'EUR')
+    checkCoin('ETH', 'EUR')
+    checkCoin('ALGO', 'EUR')
+    print("Checked all.")
+    time.sleep(delay)
+
+
+def startChecker():
+    while True:
+        checkAll()
+
+
+sendMessage(
+    f'<b>Crypto-Telegram</b> \n<code>[by arshetamine with love.]</code>')
+
+time.sleep(5)
 calibrateThreshold('BTC', 'EUR')
 calibrateThreshold('ETH', 'EUR')
 calibrateThreshold('ALGO', 'EUR')
 
-# checkCoin('BTC', 'EUR')
-# checkCoin('ETH', 'EUR')
-# checkCoin('ALGO', 'EUR')
-print(threshold)
+startChecker()
