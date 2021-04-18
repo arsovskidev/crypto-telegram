@@ -20,7 +20,7 @@ $ python3 crypto-telegram.py
 ```
 $ nano .env
 
-EXCHANGE_RATES_API = 'https://api.coinbase.com/v2/prices/'
+EXCHANGE_RATES_API = 'https://api.coingecko.com/api/v3/simple/price?'
 TELEGRAM_BOT_API = [YOUR BOT API]
 TELEGRAM_CHAT_ID = [YOUR CHAT ID]
 
