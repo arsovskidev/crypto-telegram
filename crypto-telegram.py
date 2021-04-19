@@ -51,11 +51,6 @@ def updateThreshold(coin, type, value):
             threshold[coin][type] = value - 100.00
     elif coin == "algorand":
         if type == "MAX":
-            threshold[coin][type] = value + 0.05
-        elif type == "MIN":
-            threshold[coin][type] = value - 0.05
-
-
 def calibrateThreshold(coin, fiat):
     price = getValue(coin, fiat)
     price = round(price, 2)
