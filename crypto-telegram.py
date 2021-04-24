@@ -15,9 +15,20 @@ threshold = {
     "bitcoin": {"MAX": 0.00, "MIN": 0.00},
     "ethereum": {"MAX": 0.00, "MIN": 0.00},
     "algorand": {"MAX": 0.00, "MIN": 0.00},
+    "dogecoin": {"MAX": 0.00, "MIN": 0.00},
+    "solana": {"MAX": 0.00, "MIN": 0.00},
+    "dash": {"MAX": 0.00, "MIN": 0.00},
 }
 # History List
-history = {"counter": 0, "bitcoin": [], "ethereum": [], "algorand": []}
+history = {
+    "counter": 0,
+    "bitcoin": [],
+    "ethereum": [],
+    "algorand": [],
+    "dogecoin": [],
+    "solana": [],
+    "dash": [],
+}
 # Loop interval
 time_interval = 60 * 10
 
@@ -38,19 +49,34 @@ def getValue(coin, fiat):
 def updateThreshold(coin, type, value):
     if coin == "bitcoin":
         if type == "MAX":
+            threshold[coin][type] = value + 1000.00
+        elif type == "MIN":
+            threshold[coin][type] = value - 1000.00
+    elif coin == "ethereum":
+        if type == "MAX":
             threshold[coin][type] = value + 500.00
         elif type == "MIN":
             threshold[coin][type] = value - 500.00
-    elif coin == "ethereum":
-        if type == "MAX":
-            threshold[coin][type] = value + 100.00
-        elif type == "MIN":
-            threshold[coin][type] = value - 100.00
     elif coin == "algorand":
         if type == "MAX":
             threshold[coin][type] = value + 0.05
         elif type == "MIN":
             threshold[coin][type] = value - 0.05
+    elif coin == "dogecoin":
+        if type == "MAX":
+            threshold[coin][type] = value + 0.10
+        elif type == "MIN":
+            threshold[coin][type] = value - 0.10
+    elif coin == "solana":
+        if type == "MAX":
+            threshold[coin][type] = value + 5
+        elif type == "MIN":
+            threshold[coin][type] = value - 5
+    elif coin == "dash":
+        if type == "MAX":
+            threshold[coin][type] = value + 25
+        elif type == "MIN":
+            threshold[coin][type] = value - 25
 
 
 def calibrateThreshold(coin, fiat):
@@ -64,7 +90,6 @@ def checkCoin(coin, fiat):
     price = getValue(coin, fiat)
     threshold_max = threshold[coin]["MAX"]
     threshold_min = threshold[coin]["MIN"]
-
     history[coin].append(price)
 
     if price >= threshold_max:
@@ -87,7 +112,9 @@ time.sleep(5)
 calibrateThreshold("bitcoin", "eur")
 calibrateThreshold("ethereum", "eur")
 calibrateThreshold("algorand", "eur")
-
+calibrateThreshold("dogecoin", "eur")
+calibrateThreshold("solana", "eur")
+calibrateThreshold("dash", "eur")
 
 # -----------------------------------------------------------------
 # Main Loop
@@ -99,6 +126,9 @@ def main():
         checkCoin("bitcoin", "eur")
         checkCoin("ethereum", "eur")
         checkCoin("algorand", "eur")
+        checkCoin("dogecoin", "eur")
+        checkCoin("solana", "eur")
+        checkCoin("dash", "eur")
 
         time.sleep(time_interval)
 
