@@ -6,7 +6,7 @@ import math
 
 # Load environment (.env) settings.
 load_dotenv()
-EXCHANGE_RATES_URL = os.getenv("EXCHANGE_RATES_URL")
+EXCHANGE_RATES_API = os.getenv("EXCHANGE_RATES_API")
 TELEGRAM_BOT_API = os.getenv("TELEGRAM_BOT_API")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
@@ -22,15 +22,17 @@ threshold = {
 # History List
 history = {
     "counter": 0,
-    "bitcoin": [],
-    "ethereum": [],
-    "algorand": [],
-    "dogecoin": [],
-    "solana": [],
-    "dash": [],
+    "coins": {
+        "bitcoin": [],
+        "ethereum": [],
+        "algorand": [],
+        "dogecoin": [],
+        "solana": [],
+        "dash": [],
+    },
 }
 # Loop interval
-time_interval = 60 * 10
+time_interval = 60 * 20
 
 
 def sendMessage(message):
@@ -39,7 +41,7 @@ def sendMessage(message):
 
 
 def getValue(coin, fiat):
-    url = f"{EXCHANGE_RATES_URL}ids={coin}&vs_currencies={fiat}"
+    url = f"{EXCHANGE_RATES_API}ids={coin}&vs_currencies={fiat}"
     response = requests.get(url)
     response_json = response.json()
     price = float(response_json[coin][fiat])
@@ -90,7 +92,7 @@ def checkCoin(coin, fiat):
     price = getValue(coin, fiat)
     threshold_max = threshold[coin]["MAX"]
     threshold_min = threshold[coin]["MIN"]
-    history[coin].append(price)
+    history["coins"][coin].append(price)
 
     if price >= threshold_max:
         calibrateThreshold(coin, fiat)
@@ -105,9 +107,18 @@ def checkCoin(coin, fiat):
         )
 
 
+def showHistory(reset=False):
+    sendMessage(
+        f'🚨 <i>ALERT HISTORY GRAPH IN LAST 3 HOURS</i> 🚨\n<b>BITCOIN</b> <code>{history["coins"]["bitcoin"]}</code>\n<b>ETHEREUM</b> <code>{history["coins"]["ethereum"]}</code>\n<b>ALGORAND</b> <code>{history["coins"]["algorand"]}</code>\n<b>DOGECOIN</b> <code>{history["coins"]["dogecoin"]}</code>\n<b>SOLANA</b> <code>{history["coins"]["solana"]}</code>\n<b>DASH</b> <code>{history["coins"]["dash"]}</code>'
+    )
+    if reset == True:
+        history["counter"] == 0
+        for x in history["coins"]:
+            history["coins"][x].clear()
+
+
 sendMessage(f"<b>Crypto-Telegram</b> \n<code>[by arshetamine with love.]</code>")
 
-time.sleep(5)
 
 calibrateThreshold("bitcoin", "eur")
 calibrateThreshold("ethereum", "eur")
@@ -123,12 +134,17 @@ calibrateThreshold("dash", "eur")
 def main():
     while True:
         print("Getting DATA...")
+        history["counter"] += 1
+
         checkCoin("bitcoin", "eur")
         checkCoin("ethereum", "eur")
         checkCoin("algorand", "eur")
         checkCoin("dogecoin", "eur")
         checkCoin("solana", "eur")
         checkCoin("dash", "eur")
+
+        if history["counter"] == 15:
+            showHistory(reset=True)
 
         time.sleep(time_interval)
 
