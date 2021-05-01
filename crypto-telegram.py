@@ -112,7 +112,7 @@ def showHistory():
         f'🚨 <i>ALERT HISTORY GRAPH IN LAST 3 HOURS</i> 🚨\n<b>BITCOIN</b> <code>{history["coins"]["bitcoin"]}</code>\n<b>ETHEREUM</b> <code>{history["coins"]["ethereum"]}</code>\n<b>ALGORAND</b> <code>{history["coins"]["algorand"]}</code>\n<b>DOGECOIN</b> <code>{history["coins"]["dogecoin"]}</code>\n<b>SOLANA</b> <code>{history["coins"]["solana"]}</code>\n<b>DASH</b> <code>{history["coins"]["dash"]}</code>'
     )
 
-    history["counter"] == 0
+    history["counter"] = 0
     for x in history["coins"]:
         history["coins"][x].clear()
 
