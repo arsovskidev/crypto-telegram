@@ -20,7 +20,7 @@ threshold = {
     "dash": {"MAX": 0.00, "MIN": 0.00},
 }
 # History List
-history = {
+historyData = {
     "counter": 0,
     "coins": {
         "bitcoin": [],
@@ -92,7 +92,7 @@ def checkCoin(coin, fiat):
     price = getValue(coin, fiat)
     threshold_max = threshold[coin]["MAX"]
     threshold_min = threshold[coin]["MIN"]
-    history["coins"][coin].append(price)
+    historyData["coins"][coin].append(price)
 
     if price >= threshold_max:
         calibrateThreshold(coin, fiat)
@@ -109,12 +109,12 @@ def checkCoin(coin, fiat):
 
 def showHistory():
     sendMessage(
-        f'🚨 <i>ALERT HISTORY GRAPH IN LAST 3 HOURS</i> 🚨\n<b>BITCOIN</b> <code>{history["coins"]["bitcoin"]}</code>\n<b>ETHEREUM</b> <code>{history["coins"]["ethereum"]}</code>\n<b>ALGORAND</b> <code>{history["coins"]["algorand"]}</code>\n<b>DOGECOIN</b> <code>{history["coins"]["dogecoin"]}</code>\n<b>SOLANA</b> <code>{history["coins"]["solana"]}</code>\n<b>DASH</b> <code>{history["coins"]["dash"]}</code>'
+        f'🚨 <i>ALERT HISTORY GRAPH IN LAST 3 HOURS</i> 🚨\n<b>BITCOIN</b> <code>{historyData["coins"]["bitcoin"]}</code>\n<b>ETHEREUM</b> <code>{historyData["coins"]["ethereum"]}</code>\n<b>ALGORAND</b> <code>{historyData["coins"]["algorand"]}</code>\n<b>DOGECOIN</b> <code>{historyData["coins"]["dogecoin"]}</code>\n<b>SOLANA</b> <code>{historyData["coins"]["solana"]}</code>\n<b>DASH</b> <code>{historyData["coins"]["dash"]}</code>'
     )
 
-    history["counter"] = 0
-    for x in history["coins"]:
-        history["coins"][x].clear()
+    historyData["counter"] = 0
+    for x in historyData["coins"]:
+        historyData["coins"][x].clear()
 
 
 sendMessage(f"<b>Crypto-Telegram</b> \n<code>[by arshetamine with love.]</code>")
@@ -134,7 +134,7 @@ calibrateThreshold("dash", "eur")
 def main():
     while True:
         print("Getting DATA...")
-        history["counter"] += 1
+        historyData["counter"] += 1
 
         checkCoin("bitcoin", "eur")
         checkCoin("ethereum", "eur")
@@ -143,7 +143,7 @@ def main():
         checkCoin("solana", "eur")
         checkCoin("dash", "eur")
 
-        if history["counter"] == 15:
+        if historyData["counter"] == 15:
             showHistory()
 
         time.sleep(time_interval)
